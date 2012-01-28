@@ -2,13 +2,14 @@ Summary:	Boot Process Performance Visualization
 Summary(pl.UTF-8):	Wizualizacja wydajności procesu startu systemu
 Name:		bootchart2
 Version:	0.14.2
-Release:	0.1
+Release:	1
 License:	GPL v2
 Group:		Base
 Source0:	https://github.com/downloads/mmeeks/bootchart/%{name}-%{version}.tar.bz2
 # Source0-md5:	298487b2bda897e974f9862f0a0ad0ee
 URL:		https://github.com/mmeeks/bootchart
 BuildRequires:	python
+Requires:	systemd-init
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
@@ -26,6 +27,9 @@ w formacie PNG, SVG lub EPS.
 %package gui
 Summary:	GUI for bootchart2
 Group:		Base
+Requires:	python-pycairo
+Requires:	python-pygobject
+Requires:	python-pygtk-gtk
 
 %description gui
 A tool for performance analysis and visualization of the GNU/Linux
@@ -38,7 +42,6 @@ or EPS encoded chart.
 
 %build
 %{__make} \
-	SYSTEMD_UNIT_DIR=%{systemdunitdir} \
 	CC="%{__cc}" \
 	CFLAGS="%{rpmcflags}"
 
@@ -46,7 +49,20 @@ or EPS encoded chart.
 rm -rf $RPM_BUILD_ROOT
 
 %{__make} install \
+	NO_PYTHON_COMPILE=1 \
+	PY_LIBDIR=%{py_scriptdir} \
+	SYSTEMD_UNIT_DIR=%{systemdunitdir} \
 	DESTDIR=$RPM_BUILD_ROOT
+
+%post
+%systemd_post
+%systemd_enable bootchart.service
+
+%preun
+%systemd_preun bootchart.service
+
+%postun
+%systemd_postun bootchart.service
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -54,8 +70,10 @@ rm -rf $RPM_BUILD_ROOT
 %files
 %defattr(644,root,root,755)
 %attr(755,root,root) /sbin/bootchartd
+%dir /lib/bootchart
+%dir /lib/bootchart/tmpfs
 %attr(755,root,root) /lib/bootchart/bootchart-collector
-%{_sysconfdir}/bootchartd.conf
+%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/bootchartd.conf
 %{systemdunitdir}/bootchart-done.service
 %{systemdunitdir}/bootchart-done.timer
 %{systemdunitdir}/bootchart.service
