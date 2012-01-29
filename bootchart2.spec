@@ -9,6 +9,7 @@ Source0:	https://github.com/downloads/mmeeks/bootchart/%{name}-%{version}.tar.bz
 # Source0-md5:	298487b2bda897e974f9862f0a0ad0ee
 URL:		https://github.com/mmeeks/bootchart
 BuildRequires:	python
+BuildRequires:	rpmbuild(macros) >= 1.629
 Requires:	systemd-init
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
