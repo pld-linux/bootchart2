@@ -9,8 +9,8 @@ Source0:	https://github.com/downloads/mmeeks/bootchart/%{name}-%{version}.tar.bz
 # Source0-md5:	298487b2bda897e974f9862f0a0ad0ee
 URL:		https://github.com/mmeeks/bootchart
 BuildRequires:	python
-BuildRequires:	rpmbuild(macros) >= 1.629
-Requires:	systemd-init
+BuildRequires:	rpmbuild(macros) >= 1.641
+Requires:	systemd-units >= 37-0.10
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
@@ -33,10 +33,13 @@ Requires:	python-pygobject
 Requires:	python-pygtk-gtk
 
 %description gui
-A tool for performance analysis and visualization of the GNU/Linux
-boot process. Resource utilization and process information are
-collected during the boot process and are later rendered in a PNG, SVG
-or EPS encoded chart.
+A tool which renders the output of the boot-logger tool bootchart2 to
+either the screen or files in PNG, SVF or EPS encoded chart.
+
+%description -l pl.UTF-8
+Narzędzie tworzące wykres wyświetlany na ekranie lub zapisywany do
+plików w formacie PNG, SVG lub EPS na podstawie danych dostarczonych
+przez bootchart2.
 
 %prep
 %setup -q
@@ -56,20 +59,20 @@ rm -rf $RPM_BUILD_ROOT
 	DESTDIR=$RPM_BUILD_ROOT
 
 %post
-%systemd_post
-%systemd_enable bootchart.service
+%systemd_post bootchart.service
 
 %preun
 %systemd_preun bootchart.service
 
 %postun
-%systemd_postun bootchart.service
+%systemd_reload
 
 %clean
 rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(644,root,root,755)
+%doc AUTHORS NEWS README TODO
 %attr(755,root,root) /sbin/bootchartd
 %dir /lib/bootchart
 %dir /lib/bootchart/tmpfs
@@ -83,6 +86,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files gui
 %defattr(644,root,root,755)
+%doc README.pybootchart
 %attr(755,root,root) %{_bindir}/pybootchartgui
 %{_mandir}/man1/pybootchartgui.1*
 %{py_sitescriptdir}/pybootchartgui
