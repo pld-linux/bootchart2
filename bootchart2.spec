@@ -1,12 +1,12 @@
 Summary:	Boot Process Performance Visualization
 Summary(pl.UTF-8):	Wizualizacja wydajności procesu startu systemu
 Name:		bootchart2
-Version:	0.14.2
-Release:	2
+Version:	0.14.5
+Release:	1
 License:	GPL v2
 Group:		Base
 Source0:	https://github.com/downloads/mmeeks/bootchart/%{name}-%{version}.tar.bz2
-# Source0-md5:	298487b2bda897e974f9862f0a0ad0ee
+# Source0-md5:	eecd1a57892a27792cfeed55fdf8409b
 URL:		https://github.com/mmeeks/bootchart
 BuildRequires:	python
 BuildRequires:	rpmbuild(macros) >= 1.641
